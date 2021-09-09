@@ -42,13 +42,15 @@ const typeDefs = gql`
     getRooms: [Room!]!
     getSpecificRoom(id: ID!): Room!
     deleteRoom(id: ID!): Room!
+    removeMember(id: ID!, _id: ID!): RoomApiResponse!
   }
 
   type Mutation {
     createRoom(roomInput: RoomInput): RoomApiResponse!
     updateRoom(id: ID!, roomInput: RoomInput): Room!
-    addMember(id: ID!, memberInput: [MemberInput]): [member!]!
-    addAdmin(id: ID!, createAdmin: createAdmin): RoomApiResponse
+    addMember(id: ID!, _id: ID!): RoomApiResponse!
+    addAdmin(id: ID!, createAdmin: createAdmin): RoomApiResponse!
+    dismissAdmin(id: ID!, _id: ID!): RoomApiResponse!
   }
 `;
 

@@ -1,13 +1,12 @@
 const {
   encryptPassword,
-  ReS,
+  UeS,
   ReE,
   dateToString,
   userRegisterationRules,
 } = require("../../../Helper/helper");
-const yup = require("yup");
+const validation = require("express-validator");
 const User = require("../../../Models/Users");
-const { validateUser } = require("../../../Helper/helper");
 
 const resolvers = {
   Query: {
@@ -37,7 +36,7 @@ const resolvers = {
 
         if (user) {
           console.log(user);
-          return ReS(`${user.name} Exist in DataBase`, true, user);
+          return UeS(`${user.name} Exist in DataBase`, true, user);
         } else {
           return ReE("No such User Exist", false);
         }
@@ -76,7 +75,7 @@ const resolvers = {
 
   Mutation: {
     createUser: async (parent, args) => {
-      // console.log(args);
+      console.log(args);
 
       const existingUser = await User.findOne({
         email: args.userInput.email,
@@ -99,15 +98,14 @@ const resolvers = {
         date: dateToString(args.userInput.date),
       });
 
-      await userRegisterationRules.validate(user,{abortEarly:false});
-
+      await userRegisterationRules.validate(user, { abortEarly: false });
 
       const result = await user.save().then((res) => {
         return res;
       });
 
       if (result) {
-        return ReS("User Created Succesfully", true, result);
+        return UeS("User Created Succesfully", true, result);
       } else {
         return ReE("Can't create User", false);
       }
@@ -132,7 +130,7 @@ const resolvers = {
         });
         console.log(result);
         if (result) {
-          return ReS("User Record Updated Successfully", true, result);
+          return UeS("User Record Updated Successfully", true, result);
         } else {
           return ReE("Some Error Occured", false);
         }
