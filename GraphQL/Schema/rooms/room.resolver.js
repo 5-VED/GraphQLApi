@@ -7,7 +7,10 @@ const {
 const User = require("../../../Models/Users");
 const Room = require("../../../Models/Rooms");
 const _ = require("lodash");
+const { authFxn } = require("../../../config/passport");
 const { getResolversFromSchema } = require("@graphql-tools/utils");
+
+
 const resolvers = {
   Query: {
     getRooms: async () => {
@@ -84,7 +87,11 @@ const resolvers = {
   },
 
   Mutation: {
-    createRoom: async (parent, args) => {
+    createRoom: async (parent, args,req) => {
+      if(authFxn){
+        console.log("unauthenticated")
+        throw new Error("You are Unauthenticated");
+      }
       //Hashing the password
       const hashedpassword = await encryptPassword(args.roomInput.password);
       const room = await new Room({

@@ -1,3 +1,4 @@
+const User = require("../../../Models/Users");
 const {
   encryptPassword,
   UeS,
@@ -5,8 +6,11 @@ const {
   dateToString,
   userRegisterationRules,
 } = require("../../../Helper/helper");
-const validation = require("express-validator");
-const User = require("../../../Models/Users");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { authFxn } = require("../../../config/passport");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const resolvers = {
   Query: {
@@ -26,6 +30,25 @@ const resolvers = {
           console.log(err);
           throw err;
         });
+    },
+
+    login: async (parent, args) => {
+      const user = await User.findOne({ email: args.email });
+      if (!user) {
+        throw new Error("User Does Not Exist");
+      }
+      const isEqual = await bcrypt.compare(args.password, user.password);
+      if (!isEqual) {
+        throw new Error("Invalid Credentials");
+      }
+
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.TOKEN_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      return { userId: user.id, token: token, tokenExpiration: 1 };
     },
 
     getSpecificUser: async (parent, args) => {
@@ -48,6 +71,7 @@ const resolvers = {
     },
 
     deleteUser: async (parent, args) => {
+     // app.use(authFxn(req));
       try {
         const user = await User.findById({ _id: args.id });
         if (!user) {
@@ -75,7 +99,7 @@ const resolvers = {
 
   Mutation: {
     createUser: async (parent, args) => {
-      console.log(args);
+      //console.log(args);
 
       const existingUser = await User.findOne({
         email: args.userInput.email,

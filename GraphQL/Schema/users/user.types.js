@@ -29,6 +29,12 @@ const typeDefs = gql`
     isSuccess: Boolean!
   }
 
+  type AuthData{
+    userId:ID!
+    token:String!
+    tokenExpiration:Int!
+  }
+
   type Mutation {
     createUser(userInput: UserInput): apiResponse!
     updateUser(id: ID!, userInput: UserInput): User
@@ -36,6 +42,7 @@ const typeDefs = gql`
 
   type Query {
     users: [User!]!
+    login(email:String!,password:String!):AuthData!
     getSpecificUser(id: ID!): apiResponse!
     deleteUser(id: ID!): apiResponseWithoutData!
   }

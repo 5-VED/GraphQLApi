@@ -111,5 +111,5 @@ const userAuthRules = yup.object().shape({
 });
 
 module.exports.userRegisterationRules = userRegisterationRules;
-module.exports.userAuthRules = userAuthRules;
+
 module.exports.roomRegisteartionRules = roomRegisteartionRules;
