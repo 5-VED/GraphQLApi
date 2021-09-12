@@ -1,6 +1,7 @@
 const gql = require("graphql-tag");
 
 const typeDefs = gql`
+
   type User {
     _id: ID!
     name: String!
@@ -29,10 +30,10 @@ const typeDefs = gql`
     isSuccess: Boolean!
   }
 
-  type AuthData{
-    userId:ID!
-    token:String!
-    tokenExpiration:Int!
+  type AuthData {
+    userId: ID!
+    token: String!
+    tokenExpiration: Int!
   }
 
   type Mutation {
@@ -42,7 +43,7 @@ const typeDefs = gql`
 
   type Query {
     users: [User!]!
-    login(email:String!,password:String!):AuthData!
+    login(email: String!, password: String!): AuthData!
     getSpecificUser(id: ID!): apiResponse!
     deleteUser(id: ID!): apiResponseWithoutData!
   }

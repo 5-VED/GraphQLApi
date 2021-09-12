@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 const yup = require("yup");
-const mongoose = require("mongoose");
 
 module.exports.encryptPassword = function (password) {
   return bcrypt.hash(password, bcrypt.genSaltSync(10));
@@ -10,8 +9,8 @@ module.exports.dateToString = function (date) {
   return new Date(date).toLocaleDateString();
 };
 
+// Success Web Response for Users
 module.exports.UeS = function (message, isSuccess, data) {
-  // Success Web Response for Users
   return {
     message: message,
     isSuccess: isSuccess,
@@ -24,6 +23,7 @@ module.exports.UeS = function (message, isSuccess, data) {
   };
 };
 
+// Success Web Response for Rooms
 module.exports.ReS = function (message, isSuccess, data) {
   // Success Web Response for Rooms
 
@@ -41,7 +41,21 @@ module.exports.ReS = function (message, isSuccess, data) {
     },
   };
 };
+
+// Success Web Response for Conversations
+module.exports.CeS = function (message, isSuccess, data) {
+  return {
+    message: message,
+    isSuccess: isSuccess,
+    data: {
+      ...data._doc,
+    },
+  };
+};
+
+// Error Web Response for Conversations
 module.exports.ReE = function (message, isSuccess) {
+
   return {
     message: message,
     isSuccess: isSuccess,
@@ -103,11 +117,6 @@ const roomRegisteartionRules = yup.object().shape({
   password,
   isDelete,
   members,
-});
-
-const userAuthRules = yup.object().shape({
-  email,
-  password,
 });
 
 module.exports.userRegisterationRules = userRegisterationRules;

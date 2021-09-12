@@ -6,8 +6,9 @@ const {
 const merge = require("lodash.merge");
 const user = require("./users");
 const room = require("./rooms");
-const typeDefs = [user.typeDefs,room.typeDefs];
-const resolvers = merge(user.resolvers,room.resolvers)
+const conversation = require("./conversation");
+const typeDefs = [user.typeDefs, room.typeDefs, conversation.typeDefs];
+const resolvers = merge(user.resolvers, room.resolvers, conversation.resolvers);
 
 const schema = makeExecutableSchema({
   typeDefs: [constraintDirectiveTypeDefs, typeDefs],

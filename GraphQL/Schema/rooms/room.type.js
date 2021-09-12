@@ -1,18 +1,18 @@
 const gql = require("graphql-tag");
 
 const typeDefs = gql`
-  type member {
-    _id: ID!
-    isAdmin: Boolean!
-    date: String!
-  }
-
   type Room {
     _id: ID!
     name: String!
     password: String
     members: [member!]!
     isDelete: Boolean!
+  }
+
+  type member {
+    _id: ID!
+    isAdmin: Boolean!
+    date: String!
   }
 
   input MemberInput {

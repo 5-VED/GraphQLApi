@@ -1,4 +1,5 @@
 const User = require("../../../Models/Users");
+const passportManager = require("../../../config/passport");
 const {
   encryptPassword,
   UeS,
@@ -8,7 +9,6 @@ const {
 } = require("../../../Helper/helper");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { authFxn } = require("../../../config/passport");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -70,8 +70,8 @@ const resolvers = {
       }
     },
 
-    deleteUser: async (parent, args) => {
-     // app.use(authFxn(req));
+    deleteUser: async (parent, args, req, res) => {
+      // passportManager.initialize();
       try {
         const user = await User.findById({ _id: args.id });
         if (!user) {
@@ -86,8 +86,6 @@ const resolvers = {
             message: "User Deleted Succesfully",
             isSuccess: true,
           };
-        } else {
-          return ReE("Failed to delete User Please try again", false);
         }
         return obj;
       } catch (err) {
@@ -122,7 +120,7 @@ const resolvers = {
         date: dateToString(args.userInput.date),
       });
 
-      await userRegisterationRules.validate(user, { abortEarly: false });
+      //await userRegisterationRules.validate(user, { abortEarly: false });
 
       const result = await user.save().then((res) => {
         return res;

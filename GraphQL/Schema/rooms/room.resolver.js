@@ -7,8 +7,6 @@ const {
 const User = require("../../../Models/Users");
 const Room = require("../../../Models/Rooms");
 const _ = require("lodash");
-const { authFxn } = require("../../../config/passport");
-const { getResolversFromSchema } = require("@graphql-tools/utils");
 
 
 const resolvers = {
