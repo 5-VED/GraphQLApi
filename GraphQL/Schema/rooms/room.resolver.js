@@ -86,10 +86,10 @@ const resolvers = {
 
   Mutation: {
     createRoom: async (parent, args,req) => {
-      if(authFxn){
-        console.log("unauthenticated")
-        throw new Error("You are Unauthenticated");
-      }
+      // if(authFxn){
+      //   console.log("unauthenticated")
+      //   throw new Error("You are Unauthenticated");
+      // }
       //Hashing the password
       const hashedpassword = await encryptPassword(args.roomInput.password);
       const room = await new Room({
@@ -99,7 +99,7 @@ const resolvers = {
         isDelete: args.roomInput.isDelete,
       });
 
-      await roomRegisteartionRules.validate(room, { abortEarly: false });
+      //await roomRegisteartionRules.validate(room, { abortEarly: false });
 
       const result = await room.save().then((res) => {
         return res;
@@ -178,7 +178,7 @@ const resolvers = {
       //console.log(tempArr);
       room.members.push(member);
       await room.save();
-      return ReS("Member Added Succesfully", true, room);
+      return room
     },
 
     addAdmin: async (parent, args) => {

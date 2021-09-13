@@ -80,7 +80,7 @@ const resolvers = {
       try {
         const conversation = await Conversation.findById({ _id: args._id });
         if (!conversation) {
-          return ReE("No conversations Exist", false);
+          throw new Error("Conversation Does not Exist");
         }
         while (conversation.messages.length > 0) {
           conversation.messages.pop();
@@ -90,6 +90,30 @@ const resolvers = {
       } catch (err) {
         console.log(err);
         throw new Error(err);
+      }
+    },
+    notification: async (parent, args) => {
+      const conversation = await Conversation.findOne({ _id: args._id });
+      if (!conversation) {
+        return ReE("No such Conversation Exist", false);
+      }
+      let arr = conversation.messages;
+      let receiverId = conversation.receiver_id.toString();
+      let groupId = conversation.group_id;
+
+      console.log(receiverId);
+      console.log(groupId);
+      console.log(arr[0].id);
+
+      if (groupId === null) {
+        let count = 0;
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].id.toString() === receiverId && arr[i].isRead === false) {
+            count = count + 1;
+            arr[i].isRead = true;
+          }
+        }
+        await conversation.save();
       }
     },
   },
@@ -113,10 +137,59 @@ const resolvers = {
       }
     },
 
-    deleteMessage: async (parent, args) => {
-      //console.log(args);
-      console.log(args.messages);
+    pushMessage: async (parent, args) => {
+      const conversation = await Conversation.findById({ _id: args._id });
+      if (!conversation) {
+        throw new Error("Conversation Does not Exist");
+      }
 
+      const id = args.messages._id;
+      const message = args.messages.message;
+      const arr = conversation.messages;
+
+      const pushFxn = function () {
+        let newMessage = {
+          _id: id,
+          message: message,
+        };
+        arr.push(newMessage);
+      };
+
+      const roomId = conversation.group_id;
+
+      console.log(roomId === null);
+      if (roomId === null) {
+        const sender_id = conversation.sender_id.toString();
+        const receiver_id = conversation.receiver_id.toString();
+        if (sender_id === id || receiver_id === id) {
+          pushFxn();
+          await conversation.save();
+          return conversation;
+        }
+      }
+
+      if (roomId !== null) {
+        const room = await Rooms.findOne({ _id: roomId });
+
+        let requiredArr = [];
+        for (let i = 0; i <= conversation.messages.length; i++) {
+          let obj = {};
+          obj._id = conversation.messages[i]._id.toString();
+          requiredArr.push(obj);
+        }
+
+        for (let i = 0; i < room.members.length; i++) {
+          if (requiredArr[i]._id === id) {
+            pushFxn();
+          }
+        }
+        await conversation.save();
+        return conversation;
+      }
+      return;
+    },
+
+    deleteMessage: async (parent, args) => {
       const conversation = await Conversation.findOne({ _id: args._id });
       if (!conversation) {
         throw new Error("No Such Conversation Exist");
@@ -136,6 +209,21 @@ const resolvers = {
       console.log(requiredArr);
       await conversation.save();
       return;
+    },
+    broadcast: async (parent, args) => {
+      const receivers = args.id;
+      const sender_id = args._id;
+      const message = args.message;
+
+      console.log(receivers);
+      console.log(message);
+      const room = await new Rooms({});
+      console.log(room);
+
+      let brodcastMsg = {
+        _id: message._id,
+        message: message.message,
+      };
     },
   },
 };

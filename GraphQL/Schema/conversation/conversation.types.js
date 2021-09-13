@@ -24,7 +24,7 @@ const typeDefs = gql`
     date: String!
   }
 
-  input deleteMessage {
+  input messageApi {
     _id: String!
     message: String!
   }
@@ -39,8 +39,9 @@ const typeDefs = gql`
 
   type Mutation {
     createConversation(conversationInput: conversationInput): Conversation!
-    pushMessage(_id: ID!, messageInput: messageInput): Conversation!
-    deleteMessage(_id: ID!, messages: [deleteMessage!]!): Conversation!
+    pushMessage(_id: ID!, messages: messageApi): Conversation!
+    deleteMessage(_id: ID!, messages: [messageApi!]!): Conversation!
+    broadcast(id: [ID!], message: messageApi): Conversation!
   }
 
   type Query {
@@ -49,6 +50,8 @@ const typeDefs = gql`
     archiveConversation(_id: ID!): Conversation!
     clearChat(_id: ID!): Conversation!
     getSpecificConversation(_id: ID!): Conversation!
+    notification(_id: ID!): Conversation!
   }
 `;
+
 module.exports = typeDefs;

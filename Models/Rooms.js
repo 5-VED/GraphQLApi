@@ -25,7 +25,7 @@ const schema = new mongoose.Schema(
           default: false,
         },
         date: {
-          type: Date,
+          type: String,
           default: new Date().toLocaleDateString(),
           required: true,
         },
