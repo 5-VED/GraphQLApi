@@ -3,6 +3,7 @@ const User = require("../../../Models/Users");
 const Rooms = require("../../../Models/Rooms");
 const { ReE } = require("../../../Helper/helper");
 const _ = require("lodash");
+
 const resolvers = {
   Query: {
     deleteConversation: async (parent, args) => {
@@ -60,8 +61,8 @@ const resolvers = {
         if (!conversation) {
           return ReE("No conversations Exist", false);
         }
-        console.log("got the conversation");
-        console.log(conversation.isArchived);
+        // console.log("got the conversation");
+        // console.log(conversation.isArchived);
         if (conversation.isArchived === false) {
           conversation.isArchived = true;
           await conversation.save();
@@ -157,7 +158,7 @@ const resolvers = {
 
       const roomId = conversation.group_id;
 
-      console.log(roomId === null);
+      //console.log(roomId === null);
       if (roomId === null) {
         const sender_id = conversation.sender_id.toString();
         const receiver_id = conversation.receiver_id.toString();
@@ -210,20 +211,45 @@ const resolvers = {
       await conversation.save();
       return;
     },
+
     broadcast: async (parent, args) => {
-      const receivers = args.id;
-      const sender_id = args._id;
-      const message = args.message;
+      try {
+        const conversation = await Conversation.find({ _id: args._id });
+        if (conversation.length === 0) {
+          throw new Error("First select the members to broadcast");
+        }
 
-      console.log(receivers);
-      console.log(message);
-      const room = await new Rooms({});
-      console.log(room);
+        // console.log(receivers);
+        let messageReceivers = [];
 
-      let brodcastMsg = {
-        _id: message._id,
-        message: message.message,
-      };
+        for (let i = 0; i < conversation.length; i++) {
+          messageReceivers.push(conversation[i]._id.toString());
+        }
+        // console.log(messageReceivers);
+
+        const id = args.messages._id;
+        const message = args.messages.message;
+
+        let newMessage = {
+          _id: id,
+          message: message,
+        };
+        // console.log(id);
+        // console.log(message);
+
+        for (let i = 0; i < conversation.length; i++) {
+          conversation[i].messages.push(newMessage);
+          await conversation[i].save();
+        }
+
+        while (conversation.length > 0) {
+          conversation.pop();
+        }
+
+        return { ...conversation._doc };
+      } catch (err) {
+        throw new Error(err);
+      }
     },
   },
 };

@@ -6,7 +6,7 @@ const typeDefs = gql`
     sender_id: String!
     receiver_id: String!
     group_id: String
-    isArchived: Boolean!
+    isArchived: Boolean
     messages: [message!]
   }
 
@@ -41,7 +41,8 @@ const typeDefs = gql`
     createConversation(conversationInput: conversationInput): Conversation!
     pushMessage(_id: ID!, messages: messageApi): Conversation!
     deleteMessage(_id: ID!, messages: [messageApi!]!): Conversation!
-    broadcast(id: [ID!], message: messageApi): Conversation!
+    broadcast(_id: [ID!], messages: messageApi): Conversation!
+
   }
 
   type Query {

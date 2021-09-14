@@ -25,7 +25,7 @@ module.exports.UeS = function (message, isSuccess, data) {
 
 // Success Web Response for Rooms
 module.exports.ReS = function (message, isSuccess, data) {
-  // Success Web Response for Rooms
+
 
   console.log(data);
 
