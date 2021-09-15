@@ -1,8 +1,7 @@
-const typeDefs = require('./room.type');
-const resolvers = require('./room.resolver');
+const typeDefs = require("./room.type");
+const resolvers = require("./room.resolver");
 
-module.exports ={
+module.exports = {
   typeDefs,
-  resolvers
-}
-
+  resolvers,
+};

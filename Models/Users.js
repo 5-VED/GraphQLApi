@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
-  bio: {
+  bio:{
     type: String,
     required: false,
   },
@@ -21,8 +21,15 @@ const userSchema = new mongoose.Schema({
     required: true,
     default: null,
   },
+  resetToken: {
+    type: String,
+    trim: true,
+    required: false,
+    default: null,
+  },
   date: {
-    type: Date,
+    type: String,
+    default: new Date().toLocaleDateString(),
     required: true,
   },
 });

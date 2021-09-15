@@ -1,22 +1,30 @@
 const gql = require("graphql-tag");
 
 const typeDefs = gql`
-
   type User {
     _id: ID!
     name: String!
     bio: String
     email: String!
     password: String
+    confirmPassword: String
+    resetToken: String
     date: String!
   }
 
   input UserInput {
-    name: String! @constraint(maxLength: 5)
+    name: String!
     bio: String
-    email: String! @constraint(minLength: 5, format: "email")
+    email: String!
     password: String!
+    resetToken: String
     date: String
+  }
+
+  input newPassword {
+    email: String!
+    password: String!
+    resetToken: String!
   }
 
   type apiResponse {
@@ -39,6 +47,8 @@ const typeDefs = gql`
   type Mutation {
     createUser(userInput: UserInput): apiResponse!
     updateUser(id: ID!, userInput: UserInput): User
+    requestReset(email: String!): User
+    resetPassword(newPassword: newPassword): User
   }
 
   type Query {

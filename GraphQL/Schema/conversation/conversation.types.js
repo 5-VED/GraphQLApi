@@ -14,7 +14,7 @@ const typeDefs = gql`
     _id: String!
     isRead: Boolean
     message: String!
-    date: String!
+    dtypeate: String!
   }
 
   input messageInput {
@@ -42,7 +42,6 @@ const typeDefs = gql`
     pushMessage(_id: ID!, messages: messageApi): Conversation!
     deleteMessage(_id: ID!, messages: [messageApi!]!): Conversation!
     broadcast(_id: [ID!], messages: messageApi): Conversation!
-
   }
 
   type Query {

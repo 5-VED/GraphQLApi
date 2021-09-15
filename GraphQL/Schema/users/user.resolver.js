@@ -1,5 +1,8 @@
 const User = require("../../../Models/Users");
-const passportManager = require("../../../config/passport");
+const Token = require("../../../Models/Token");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+//const passportManager = require("../../../config/passport");
 const {
   encryptPassword,
   UeS,
@@ -161,6 +164,48 @@ const resolvers = {
         console.log(err);
         throw err;
       }
+    },
+    requestReset: async (parent, args) => {
+      const user = await User.findOne({ email: args.email });
+      console.log(user);
+      if (!user) {
+        throw new Error("User Does Not Exist");
+      }
+
+      //console.log(email);
+      let token = crypto.randomBytes(64).toString("hex");
+      await User.updateOne({ _id: user._id }, { $set: { resetToken: token } });
+      //console.log(temp);
+
+      //console.log(token);
+      const email = user.email;
+      let transporter = nodemailer.createTransport({
+        host: process.env.HOST,
+        service: process.env.SERVICE,
+        prot: 587,
+        secure: true,
+        auth: {
+          user: process.env.SENDER,
+          pass: process.env.PASSWORD,
+        },
+      });
+
+      let mailOptions = {
+        from: process.env.SENDER,
+        to: email,
+        subject: "Password reset Link",
+        html: `<h2> Please use given token to reset the password</h2>
+             <p>${token}</p>
+           `,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          throw new Error(error);
+        } else {
+          return { ...user._doc };
+        }
+      });
     },
   },
 };
